@@ -9,10 +9,10 @@ function [all_theta] = oneVsAll(X, y, num_labels, lambda)
 
 % Some useful variables
 m = size(X, 1);
-n = size(X, 2);
+f = size(X, 2);
 
 % You need to return the following variables correctly 
-all_theta = zeros(num_labels, n + 1);
+all_theta = zeros(num_labels, f + 1);
 
 % Add ones to the X data matrix
 X = [ones(m, 1) X];
@@ -21,6 +21,25 @@ X = [ones(m, 1) X];
 % Instructions: You should complete the following code to train num_labels
 %               logistic regression classifiers with regularization
 %               parameter lambda. 
+
+
+%all_theta = ? num_labels * (f+1) matrix
+
+initTheta = zeros(f+1, 1);
+options = optimset('GradObj', 'on');
+
+for i=1:num_labels
+  mappedY = y == i;
+  [A, fA, iter] = ...
+  fmincg(@(a)(lrCostFunction(a, X, mappedY, lambda)), initTheta, options);
+
+  %what are A and fA
+  %A is the minimal value.. of theta.
+  %fA is ?
+
+  all_theta(i,:) = A(:)';
+end
+
 %
 % Hint: theta(:) will return a column vector.
 %
@@ -64,3 +83,4 @@ X = [ones(m, 1) X];
 
 
 end
+
