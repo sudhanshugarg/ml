@@ -86,3 +86,8 @@ pred = predictOneVsAll(all_theta, X);
 
 fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
 
+%% ================ Part 4: Look at all non predicted values ================
+
+incorrectlyPredicted = pred != y;
+incorrectIndices = find(incorrectlyPredicted == 1);
+displayData(X(incorrectIndices, :));

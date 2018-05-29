@@ -64,6 +64,12 @@ pred = predict(Theta1, Theta2, X);
 
 fprintf('\nTraining Set Accuracy: %f\n', mean(double(pred == y)) * 100);
 
+incorrectlyPredicted = pred != y;
+incorrectIndices = find(incorrectlyPredicted == 1);
+displayData(X(incorrectIndices, :));
+
+pause;
+
 fprintf('Program paused. Press enter to continue.\n');
 pause;
 
@@ -71,7 +77,8 @@ pause;
 %  through the examples one at the a time to see what it is predicting.
 
 %  Randomly permute examples
-rp = randperm(m);
+%rp = randperm(m);
+rp = incorrectIndices;
 
 for i = 1:m
     % Display 
@@ -79,7 +86,7 @@ for i = 1:m
     displayData(X(rp(i), :));
 
     pred = predict(Theta1, Theta2, X(rp(i),:));
-    fprintf('\nNeural Network Prediction: %d (digit %d)\n', pred, mod(pred, 10));
+    fprintf('\nNeural Network Prediction: %d (digit %d)\n', pred, mod(y(rp(i)), 10));
     
     % Pause with quit option
     s = input('Paused - press enter to continue, q to exit:','s');
