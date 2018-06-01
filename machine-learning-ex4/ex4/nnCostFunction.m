@@ -83,13 +83,46 @@ J = -1/m * sum(sum((Y .* pred_1) + ((1 - Y) .* pred_0)));
 %add regularization term without the zeros.
 J = J + lambda * (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2)))/(2*m);
 
-
 % -------------------------------------------------------------
+%Time for backprop
+  d3 = zeros(num_labels, 1);
+  d2 = zeros(hidden_layer_size, 1);
+  D1 = zeros(size(Theta1));
+  D2 = zeros(size(Theta2));
 
+  for i = 1:m
+    %ith example
+    %for all labels
+    d3 = (a3(i,:) .- Y(i,:))';
+
+    %now to compute d2
+    d2 = (Theta2(:, 2:end)' * d3) .* deriv(a2, i)';
+
+    D2 = D2 + d3 * a2(i,:);
+    D1 = D1 + d2 * a1(i,:);
+  end
+
+  %done with all training examples, now compute final gradients
+  %do not count terms that correspond to bias terms for regularization
+
+  Theta1_wo_bias = Theta1;
+  Theta1_wo_bias(:,1) = 0;
+  Theta2_wo_bias = Theta2;
+  Theta2_wo_bias(:,1) = 0;
+
+  Theta1_grad = 1/m * (D1 + lambda * Theta1_wo_bias);
+  Theta2_grad = 1/m * (D2 + lambda * Theta2_wo_bias);
 % =========================================================================
+
+
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
 
 
+end
+
+function[d] = deriv(a2, i)
+  %i is the ith training example
+  d = a2(i,2:end) .* (1 - a2(i,2:end));
 end
